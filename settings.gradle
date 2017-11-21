@@ -1,1 +1,1 @@
-include ':app', ':refreshlayout', ':refreshlayout_core'
+include ':app', ':refreshlayout', ':refreshlayout_lottie'

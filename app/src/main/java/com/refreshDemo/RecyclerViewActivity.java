@@ -11,9 +11,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.GoRefesh_core.LottieView;
 import com.GoRefresh.GoRefreshLayout;
 import com.GoRefresh.LoadmoreListener;
-import com.GoRefresh.LottieView;
 import com.GoRefresh.RefreshListener;
 import com.bumptech.glide.Glide;
 

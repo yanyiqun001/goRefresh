@@ -3,7 +3,7 @@ package com.refreshDemo;
 import android.content.Context;
 import android.widget.TextView;
 
-import com.GoRefresh.LottieView;
+import com.GoRefesh_core.LottieView;
 
 /**
  * Created by Administrator on 2017/10/23 0023.

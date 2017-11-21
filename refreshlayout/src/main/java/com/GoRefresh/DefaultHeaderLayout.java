@@ -27,9 +27,9 @@ public class DefaultHeaderLayout  implements IHeaderView {
 
     private void initView() {
         mHeaderView=LayoutInflater.from(context).inflate(R.layout.headerview,null);
-        icon=mHeaderView.findViewById(R.id.arrow);
-        text=mHeaderView.findViewById(R.id.text);
-        progressBar=mHeaderView.findViewById(R.id.progressbar);
+        icon= (ImageView) mHeaderView.findViewById(R.id.arrow);
+        text= (TextView) mHeaderView.findViewById(R.id.text);
+        progressBar= (RingProgressBar) mHeaderView.findViewById(R.id.progressbar);
         icon.setVisibility(View.VISIBLE);
         icon.setImageResource(R.drawable.arrow);
     }
@@ -96,8 +96,5 @@ public class DefaultHeaderLayout  implements IHeaderView {
         progressBar.setVisibility(View.GONE);
         progressBar.stopAnimation();
     }
-
-
-
 
 }

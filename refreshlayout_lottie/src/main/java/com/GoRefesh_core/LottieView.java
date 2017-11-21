@@ -1,10 +1,11 @@
-package com.GoRefresh;
+package com.GoRefesh_core;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.GoRefresh.IHeaderView;
 import com.airbnb.lottie.LottieAnimationView;
 
 /**
@@ -29,7 +30,7 @@ public class LottieView implements IHeaderView {
 
     private void initView(Context context, int layoutId, int lottieViewId) {
         view = LayoutInflater.from(context).inflate(layoutId, null);
-        animationView = view.findViewById(lottieViewId);
+        animationView = (LottieAnimationView) view.findViewById(lottieViewId);
 
     }
 
