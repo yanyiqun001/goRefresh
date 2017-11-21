@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+    <ImageView
+        android:layout_marginTop="10dp"
+        android:id="@+id/arrow"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:visibility="gone"/>
+    <com.refreshDemo.MulRingProgressBar
+        android:layout_marginTop="10dp"
+        android:id="@+id/progressview"
+        app:progress_duration="1300"
+        app:progress_ball_radius="0.4dp"
+        app:progress_increment="0.7"
+        app:progress_count="6"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:visibility="gone"/>
+    <TextView
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</LinearLayout>

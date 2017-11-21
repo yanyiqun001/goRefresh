@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item app:showAsAction="never"
+        android:id="@+id/item1"
+        android:title="样式1"></item>
+    <item app:showAsAction="never"
+        android:id="@+id/item2"
+        android:title="样式2"></item>
+    <item app:showAsAction="never"
+        android:id="@+id/item3"
+        android:title="样式3"></item>
+    <item app:showAsAction="never"
+        android:id="@+id/item4"
+        android:title="样式4"></item>
+    <item app:showAsAction="never"
+        android:id="@+id/item5"
+        android:title="样式5"></item>
+    <item app:showAsAction="never"
+        android:id="@+id/item6"
+        android:title="样式6"></item>
+    <item app:showAsAction="never"
+        android:id="@+id/item7"
+        android:title="样式7"></item>
+    <item app:showAsAction="never"
+        android:id="@+id/item8"
+        android:title="样式8"></item>
+    <item app:showAsAction="never"
+        android:id="@+id/item9"
+        android:title="样式9"></item>
+    <item app:showAsAction="never"
+        android:id="@+id/item10"
+        android:title="样式10"></item>
+    <item app:showAsAction="never"
+        android:id="@+id/item11"
+        android:title="样式11"></item>
+
+</menu>

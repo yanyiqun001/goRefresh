@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.GoRefresh.GoRefreshLayout
+        android:id="@+id/goRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/defaultbg">
+        <ListView
+            android:id="@+id/listView"
+            android:background="#fff"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </ListView>
+    </com.GoRefresh.GoRefreshLayout>
+</LinearLayout>

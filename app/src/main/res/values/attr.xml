@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MulRingProgressBar">
+        <attr name="progress_ball_color" format="color" />
+        <attr name="progress_ring_color" format="color" />
+        <attr name="progress_ball_radius" format="dimension" />
+        <attr name="progress_ring_radius" format="dimension" />
+        <attr name="progress_ring_stokewidth" format="dimension" />
+        <attr name="progress_duration" format="integer" />
+        <attr name="progress_increment" format="float" />
+        <attr name="progress_count" format="integer" />
+    </declare-styleable>
+
+</resources>

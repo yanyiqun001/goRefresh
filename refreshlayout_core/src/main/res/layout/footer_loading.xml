@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+    <com.GoRefresh.RingProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        app:progress_ball_color="#28C0C6"
+        app:progress_ball_radius="2dp"
+        app:progress_ring_color="#dedede" />
+    <TextView
+        android:layout_marginLeft="10dp"
+        android:textColor="#9e9e9e"
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/loadingtext"/>
+</LinearLayout>

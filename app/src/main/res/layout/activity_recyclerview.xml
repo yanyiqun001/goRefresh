@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.GoRefresh.GoRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/defaultbg"
+    android:id="@+id/layout">
+    <android.support.v7.widget.RecyclerView
+        android:background="#fff"
+        android:id="@+id/rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+    </android.support.v7.widget.RecyclerView>
+</com.GoRefresh.GoRefreshLayout>
