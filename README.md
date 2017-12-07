@@ -1,6 +1,8 @@
 # goRefresh
 #### 使用
 
+![image](https://jitpack.io/v/yanyiqun001/goRefresh.svg)
+
 项目gradle文件添加
 ```
 allprojects {
@@ -10,11 +12,12 @@ allprojects {
           }
       }
  ```
-module下添加依赖
+module下添加依赖 
 
    ```
 dependencies{
-      compile 'com.github.yanyiqun001:goRefresh:0.6'
+         compile 'com.github.yanyiqun001.goRefresh:refreshlayout:0.6'
+         compile 'com.github.yanyiqun001.goRefresh:refreshlayout_lottie:0.6' (需要使用lottie动画时添加)
 }
  ```
 #### 截图
