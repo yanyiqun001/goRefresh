@@ -13,7 +13,7 @@
         android:src="@drawable/arrow"
         android:visibility="gone" />
 
-    <com.GoRefresh.RingProgressBar
+    <com.GoRefresh.weight.RingProgressBar
         android:id="@+id/progressbar"
         android:layout_width="25dp"
         android:layout_height="25dp"

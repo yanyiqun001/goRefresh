@@ -1,8 +1,5 @@
 <resources>
     <string name="app_name">GoRefresh</string>
-    <string name="release">释放刷新</string>
-    <string name="pull">下拉刷新</string>
-    <string name="refrshing">正在刷新</string>
 
     <string name="retry"><u>加载失败，请重试</u></string>
 </resources>

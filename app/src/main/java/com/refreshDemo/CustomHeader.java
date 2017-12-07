@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.GoRefresh.IHeaderView;
+import com.GoRefresh.interfaces.IHeaderView;
 
 /**
  * Created by Administrator on 2017/11/5 0005.
@@ -29,7 +29,9 @@ public class CustomHeader implements IHeaderView {
         icon.setImageResource(R.drawable.arrow);
         icon.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
-        mTextView.setText("下拉刷新");
+       // progressBar.setColors(R.color.red,R.color.colorAccent,R.color.red_comm_click,R.color.colorPrimary,R.color.defaultbg);
+        progressBar.setColor(R.color.colorAccent);
+        mTextView.setText(R.string.pulltorefresh);
     }
 
     @Override
@@ -49,10 +51,10 @@ public class CustomHeader implements IHeaderView {
     @Override
     public void onChange(boolean isPull) {
         if(isPull){//下拉经过临界点
-            mTextView.setText("松手刷新");
+            mTextView.setText(R.string.release);
             arrowUp();
         }else{ //上拉经过临界点
-            mTextView.setText("下拉刷新");
+            mTextView.setText(R.string.pulltorefresh);
             arrowDown();
         }
 
@@ -63,7 +65,7 @@ public class CustomHeader implements IHeaderView {
         progressBar.setVisibility(View.VISIBLE);
         progressBar.start();
         icon.setVisibility(View.GONE);
-        mTextView.setText("正在加载");
+        mTextView.setText(R.string.loading);
 
     }
 
@@ -86,7 +88,7 @@ public class CustomHeader implements IHeaderView {
 
 
     private void reset() {
-        mTextView.setText("下拉刷新");
+        mTextView.setText(R.string.pulltorefresh);
         progressBar.setVisibility(View.GONE);
         progressBar.stop();
         icon.setVisibility(View.VISIBLE);

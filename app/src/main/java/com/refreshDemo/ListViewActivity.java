@@ -14,8 +14,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.GoRefresh.GoRefreshLayout;
-import com.GoRefresh.LoadmoreListener;
-import com.GoRefresh.RefreshListener;
+import com.GoRefresh.interfaces.LoadMoreListener;
+import com.GoRefresh.interfaces.RefreshListener;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
@@ -44,11 +44,14 @@ public class ListViewActivity extends AppCompatActivity {
         }
         listView.setAdapter(adapter);
 
+        CustomFooter customFooter = new CustomFooter(this);
+        goRefreshLayout.setFooterView(customFooter);
+
         goRefreshLayout.setLoadingView(R.layout.footer_loading);
         goRefreshLayout.setErrorViewWithRetry(R.layout.footerview_error, R.id.tips);
 
         //下拉刷新
-        goRefreshLayout.setOnRefreshListener(    new RefreshListener() {
+        goRefreshLayout.setOnRefreshListener( new RefreshListener() {
             @Override
             public void onRefresh() {
                 new Handler().postDelayed(new Runnable() {
@@ -65,7 +68,7 @@ public class ListViewActivity extends AppCompatActivity {
         });
         goRefreshLayout.startRefresh();
         //上拉加载
-        goRefreshLayout.setOnLoadmoreListener(new LoadmoreListener() {
+        goRefreshLayout.setOnLoadMoreListener(new LoadMoreListener() {
             @Override
             public void onLoadmore() {
                 new Handler().postDelayed(new Runnable() {

@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
+import com.GoRefresh.interfaces.IFooterView;
+
 
 /**
  * Created by Administrator on 2017/9/30 0030.
@@ -16,7 +18,7 @@ public class DefaultFooterView implements IFooterView {
     private View loadingView;
     private View finishView;
     private View errorView;
-    private View retryView;
+    private int retryId;
 
     public DefaultFooterView(Context context) {
         this.context = context;
@@ -27,8 +29,9 @@ public class DefaultFooterView implements IFooterView {
         loadingView = LayoutInflater.from(context).inflate(R.layout.footer_loading, null);
         finishView = LayoutInflater.from(context).inflate(R.layout.footer_finish, null);
         errorView = LayoutInflater.from(context).inflate(R.layout.footer_error, null);
-        retryView = errorView.findViewById(R.id.tips);
-        ((TextView) retryView).getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+        retryId=R.id.tips;
+        TextView retryView = (TextView) errorView.findViewById(retryId);
+        retryView.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
     }
 
     @Override
@@ -47,10 +50,15 @@ public class DefaultFooterView implements IFooterView {
     }
 
     @Override
-    public View getRetryView() {
-
-        return retryView;
+    public int getRetryId() {
+        return retryId;
     }
+
+//    @Override
+//    public View getRetryView() {
+//
+//        return retryView;
+//    }
 
     public void setLoadingView(int layoutID) {
         this.loadingView = LayoutInflater.from(context).inflate(layoutID, null);
@@ -68,8 +76,8 @@ public class DefaultFooterView implements IFooterView {
         this.finishView = finishView;
     }
 
-    public void setErrorView(int layoutID) {
-        View errorView = LayoutInflater.from(context).inflate(layoutID, null);
+    public void setErrorView(int errorLayoutID) {
+        View errorView = LayoutInflater.from(context).inflate(errorLayoutID, null);
         this.errorView = errorView;
     }
 
@@ -77,15 +85,16 @@ public class DefaultFooterView implements IFooterView {
         this.errorView = errorView;
     }
 
-    public void setErrorView(int layoutID, int retryId) {
-        View errorView = LayoutInflater.from(context).inflate(layoutID, null);
-        View retryView = errorView.findViewById(retryId);
+    public void setErrorView(View errorView, int retryId) {
         this.errorView = errorView;
-        this.retryView = retryView;
+        this.retryId = retryId;
     }
 
-    public void setErrorView(View errorView, View retryView) {
+
+    public void setErrorView(int errorLayoutID, int retryId) {
+        View errorView = LayoutInflater.from(context).inflate(errorLayoutID, null);
         this.errorView = errorView;
-        this.retryView = retryView;
+        this.retryId = retryId;
     }
+
 }

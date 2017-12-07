@@ -5,7 +5,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import com.GoRefresh.IHeaderView;
+import com.GoRefresh.interfaces.IHeaderView;
 import com.airbnb.lottie.LottieAnimationView;
 
 /**
@@ -34,10 +34,9 @@ public class LottieView implements IHeaderView {
 
     }
 
-    public void setAnimation(String filename){
+    public void setAnimation(String filename) {
         animationView.setAnimation(filename);
     }
-
 
     @Override
     public View getView() {
@@ -50,23 +49,20 @@ public class LottieView implements IHeaderView {
         animationView.setProgress(progress);
     }
 
-
     @Override
     public void onReady() {
 
     }
-
 
     @Override
     public void onChange(boolean isPull) {
 
     }
 
-
     @Override
     public void onRefresh() {
         valueAnimator = ValueAnimator.ofFloat(0.0f, 1.0f);
-        valueAnimator.setDuration(duration==0?animationView.getDuration():duration);
+        valueAnimator.setDuration(duration == 0 ? animationView.getDuration() : duration);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
@@ -76,7 +72,6 @@ public class LottieView implements IHeaderView {
         valueAnimator.setRepeatCount(-1);
         valueAnimator.start();
     }
-
 
     @Override
     public void onRefreshFinish() {
@@ -98,7 +93,7 @@ public class LottieView implements IHeaderView {
     }
 
     private float culProgress(float from, float to, float percent) {
-        return from  +percent * (to - from);
+        return from + percent * (to - from);
     }
 
     public void setPullProgressRange(float from, float to) {

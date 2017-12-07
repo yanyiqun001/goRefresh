@@ -19,8 +19,9 @@ import android.widget.TextView;
 
 import com.GoRefesh_core.LottieView;
 import com.GoRefresh.GoRefreshLayout;
-import com.GoRefresh.LoadmoreListener;
-import com.GoRefresh.RefreshListener;
+import com.GoRefresh.interfaces.LoadMoreListener;
+import com.GoRefresh.interfaces.RefreshListener;
+import com.GoRefresh.RvLoadMoreWrapper;
 import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 
@@ -38,7 +39,7 @@ public class LottieActivity extends AppCompatActivity {
     private List<Integer> list = new ArrayList<>();
     private final int COUNT = 10;
     private LottieView lottieView;
-
+    private RvLoadMoreWrapper rvLoadMoreWrapper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,13 +51,10 @@ public class LottieActivity extends AppCompatActivity {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(gridLayoutManager);
         adapter = new MyAdapter();
-        recyclerView.setAdapter(adapter);
-        addData();
 
         lottieView = new LottieView(this, R.layout.lottie_gift, R.id.animation_view);
         lottieView.setPullOriginProgress(1f);
         refreshLayout.setHeaderView(lottieView);
-
         refreshLayout.setOnRefreshListener(new RefreshListener() {
             @Override
             public void onRefresh() {
@@ -68,8 +66,13 @@ public class LottieActivity extends AppCompatActivity {
                 }, 4000);
             }
         });
+
         refreshLayout.setHasFooter(true);
-        refreshLayout.setOnLoadmoreListener(new LoadmoreListener() {
+        rvLoadMoreWrapper=refreshLayout.buildRvLoadMoreAdapter(adapter);
+        rvLoadMoreWrapper.setLoadingView(R.layout.lottle_loading_animation_footer);
+        recyclerView.setAdapter(rvLoadMoreWrapper);
+
+        refreshLayout.setOnLoadMoreListener(new LoadMoreListener() {
             @Override
             public void onLoadmore() {
                 new Handler().postDelayed(new Runnable() {
@@ -81,11 +84,13 @@ public class LottieActivity extends AppCompatActivity {
                 }, 2000);
             }
         });
+
+        addData();
     }
 
     private void addData() {
         DataSource.addData(list);
-        adapter.notifyItemRangeChanged(list.size() - COUNT, list.size());
+        rvLoadMoreWrapper.notifyItemRangeChanged(list.size() - COUNT, list.size());
     }
 
 
@@ -108,7 +113,7 @@ public class LottieActivity extends AppCompatActivity {
                 lottieView = new MyLottileView(this, R.layout.lottie_oval, R.id.animation_view);
                 break;
             case R.id.item3: //截取指定部分动画
-                lottieView = new LottieView(this, R.layout.lottie_loading, R.id.animation_view);
+                lottieView = new MyLottileView(this, R.layout.lottie_loading, R.id.animation_view);
                 lottieView.setPullProgressRange(0f, 0.7f);  //设置下拉过程中动画变化范围（0f-1f）默认无动画
                 lottieView.setRefreshProgressRange(0.1f, 0.66f); //设置刷新过程中动画变化范围（0f-1f） 默认0f-1f
                 lottieView.setRefreshDuration(1200); //动画时长
@@ -131,7 +136,6 @@ public class LottieActivity extends AppCompatActivity {
             case R.id.item6:
                 lottieView = new LottieView(this, R.layout.lottie_jump_loader, R.id.animation_view);
                 break;
-
             case R.id.item7:
                 lottieView = new LottieView(this, R.layout.lottie_simple, R.id.animation_view);
                 lottieView.setPullProgressRange(0f, 1f);
@@ -151,7 +155,6 @@ public class LottieActivity extends AppCompatActivity {
                 lottieView.setRefreshProgressRange(0f, 0.5f);
                 lottieView.setPullOriginProgress(0.45f);
                 break;
-
         }
         refreshLayout.setHeaderView(lottieView);
         return true;

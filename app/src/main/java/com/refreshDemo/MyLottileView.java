@@ -16,6 +16,7 @@ public class MyLottileView extends LottieView {
     public MyLottileView(Context context, int layoutId, int lottieViewId) {
         super(context, layoutId, lottieViewId);
         textView = getView().findViewById(R.id.tv);
+        textView.setText(R.string.pulltorefresh);
     }
 
     @Override
@@ -35,14 +36,14 @@ public class MyLottileView extends LottieView {
         if (isPull) {
             textView.setText(R.string.release);
         } else {
-            textView.setText(R.string.pull);
+            textView.setText(R.string.pulltorefresh);
         }
     }
 
     @Override
     public void onRefresh() {
         super.onRefresh();
-        textView.setText(R.string.refrshing);
+        textView.setText(R.string.loading);
     }
 
     @Override
@@ -53,6 +54,6 @@ public class MyLottileView extends LottieView {
     @Override
     public void onBackFinish() {
         super.onBackFinish();
-        textView.setText(R.string.pull);
+        textView.setText(R.string.pulltorefresh);
     }
 }

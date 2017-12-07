@@ -1,12 +1,11 @@
 package com.refreshDemo;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
 import com.GoRefresh.GoRefreshLayout;
-import com.GoRefresh.RefreshListener;
+import com.GoRefresh.interfaces.RefreshListener;
 import com.GoRefresh.googleLayout.GoogleLayout;
 
 /**
@@ -16,7 +15,6 @@ import com.GoRefresh.googleLayout.GoogleLayout;
 public class ScrollerViewActivity extends AppCompatActivity {
     GoRefreshLayout goRefreshLayout;
 
-    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,7 +25,6 @@ public class ScrollerViewActivity extends AppCompatActivity {
         googleLayout.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimaryDark);
         goRefreshLayout.setFixedContent(true);
         goRefreshLayout.setHasFooter(true);
-        goRefreshLayout.setDurationFooterHidden(200  );
         goRefreshLayout.setOnRefreshListener(new RefreshListener() {
             @Override
             public void onRefresh() {

@@ -11,12 +11,15 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.LinearInterpolator;
 import android.widget.AbsListView;
 import android.widget.ListView;
+
+import com.GoRefresh.interfaces.IFooterView;
+import com.GoRefresh.interfaces.IHeaderView;
+import com.GoRefresh.interfaces.LoadMoreListener;
+import com.GoRefresh.interfaces.RefreshListener;
 
 import static android.view.MotionEvent.ACTION_MOVE;
 import static android.view.MotionEvent.ACTION_UP;
@@ -31,7 +34,7 @@ public class GoRefreshLayout extends ViewGroup {
     //header高度
     private float mHeaderHeight = 250;
     //footer高度
-    private float mFooterHeight = 100;
+    private float mFooterHeight;
     //刷新高度
     private float mRefreshHeight = 300;
     //手指拖动距离与下拉距离之比
@@ -41,9 +44,9 @@ public class GoRefreshLayout extends ViewGroup {
     //返回到刷新高度(头部高度)时长
     private int duration_backtoRefreshHeight = 200;
     //底部弹出时长
-    private int duration_footerVisiable = 200;
+    private int duration_footerVisiable = 100;
     //底部隐藏时长
-    private int duration_footerHidden = 200;
+    private int duration_footerHidden = 100;
     //自动刷新弹出时间
     private int duration_autotoRefreshHeight = 500;
     //当前状态
@@ -73,11 +76,13 @@ public class GoRefreshLayout extends ViewGroup {
 
     private RefreshListener refresrhListener;
 
-    private LoadmoreListener loadmoreListener;
+    private LoadMoreListener loadMoreListener;
 
     private AbsListView.OnScrollListener mScrollListener;
     //是否在加载状态
     private boolean isLoadingMore;
+    //    //footer显示时true
+//    private boolean isLoadingMore2;
     //是否显示hasHeader
     private boolean hasHeader = true;
     //是否显示footer
@@ -92,23 +97,22 @@ public class GoRefreshLayout extends ViewGroup {
     private int mOrignY;
     private int mLastY;
     private float mCurrentLastY;
-    private VelocityTracker velocityTracker;
     private float velocity;
     //内容固定状态下当前头部偏移
     private float fixOffset;
 
-    private ValueAnimator valueAnimatorTotop;
+    private ValueAnimator valueAnimatorToTop;
     private ValueAnimator valueAnimatorToRefresh;
 
-
+    private float NONE = -1;
     private int mFooterStatus = 1;
     private int LOADING = 1; //加载状态
     private int FINISH = 2; //完成状态
     private int ERROR = 3; //错误状态
 
-    private boolean isLoadingMore2;
-
     private Context context;
+
+    private LoadMoreHelper loadMoreHelper = new LoadMoreHelper();
 
     public GoRefreshLayout(@NonNull Context context) {
         super(context);
@@ -131,18 +135,18 @@ public class GoRefreshLayout extends ViewGroup {
         mMaxHeight = typedArray.getDimension(R.styleable.GoRefreshLayout_maxHeight, mMaxHeight);
         mRefreshHeight = typedArray.getDimension(R.styleable.GoRefreshLayout_refreshHeight, mRefreshHeight);
         mHeaderHeight = typedArray.getDimension(R.styleable.GoRefreshLayout_headerHeight, mHeaderHeight);
-        mFooterHeight = typedArray.getDimension(R.styleable.GoRefreshLayout_footerHeight, mFooterHeight);
+        mFooterHeight = typedArray.getDimension(R.styleable.GoRefreshLayout_footerHeight, NONE);
         isFixedContent = typedArray.getBoolean(R.styleable.GoRefreshLayout_isFixed, isFixedContent);
         mDamping = typedArray.getFloat(R.styleable.GoRefreshLayout_damping, mDamping);
         duration_backtoRefreshHeight = typedArray.getInt(R.styleable.GoRefreshLayout_duration_BacktorefreshHeight, duration_backtoRefreshHeight);
         duration_top = typedArray.getInt(R.styleable.GoRefreshLayout_duration_BacktoTop, duration_top);
         duration_footerVisiable = typedArray.getInt(R.styleable.GoRefreshLayout_duration_FooterVisibility, duration_footerVisiable);
         duration_footerHidden = typedArray.getInt(R.styleable.GoRefreshLayout_duration_FooterHidden, duration_footerHidden);
-        duration_autotoRefreshHeight=typedArray.getInt(R.styleable.GoRefreshLayout_duration_autotoRefreshHeight, duration_autotoRefreshHeight);
+        duration_autotoRefreshHeight = typedArray.getInt(R.styleable.GoRefreshLayout_duration_autotoRefreshHeight, duration_autotoRefreshHeight);
         typedArray.recycle();
         mHeader = new DefaultHeaderLayout(context);
         mFooter = new DefaultFooterView(context);
-        velocityTracker = VelocityTracker.obtain();
+
     }
 
 
@@ -163,8 +167,7 @@ public class GoRefreshLayout extends ViewGroup {
                 @Override
                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
-                    if (hasFooter)
-                        showFooter(ScrollingUtil.isViewToBottom(mContentView));
+                    //loadMoreHelper.showFooter(ScrollingUtil.isViewToBottom(mContentView));
                 }
             });
         } else if (mContentView instanceof AbsListView) {
@@ -181,13 +184,13 @@ public class GoRefreshLayout extends ViewGroup {
                     if (mScrollListener != null) {
                         mScrollListener.onScroll(absListView, i, i1, i2);
                     }
-                    if (hasFooter)
-                        showFooterwithListView(absListView, ScrollingUtil.isViewToBottom(mContentView));
+                    loadMoreHelper.showFooter(ScrollingUtil.isViewToBottom(mContentView));
                 }
             });
         }
 
         addHeaderView(mHeader);
+        loadMoreHelper.setFooterView(getDefaultFooterView(), mContentView);
     }
 
 
@@ -196,26 +199,6 @@ public class GoRefreshLayout extends ViewGroup {
         LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, (int) mHeaderHeight);
         mHeaderView.setLayoutParams(params);
         addView(mHeaderView);
-    }
-
-
-    private void addFooterView(IFooterView view, int flag) {
-        if (flag == LOADING) {
-            mFooterView = view.getLoadingView();
-        } else if (flag == FINISH) {
-            mFooterView = view.getFinishView();
-        } else if (flag == ERROR) {
-            mFooterView = view.getFailureView();
-        }
-        if (mContentView instanceof AbsListView) {
-            AbsListView.LayoutParams params = new AbsListView.LayoutParams(LayoutParams.MATCH_PARENT, (int) mFooterHeight);
-            mFooterView.setLayoutParams(params);
-            ((ListView) mContentView).addFooterView(mFooterView);
-        } else {
-            LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, (int) mFooterHeight);
-            mFooterView.setLayoutParams(params);
-            addView(mFooterView);
-        }
     }
 
 
@@ -252,41 +235,14 @@ public class GoRefreshLayout extends ViewGroup {
                 } else {
                     child.layout(0, -child.getMeasuredHeight(), child.getMeasuredWidth(), 0);
                 }
-            } else if (child == mFooterView) {
-                child.layout(0, getHeight(), child.getMeasuredWidth(), getHeight() + child.getMeasuredHeight());
-            } else {
+            }
+//            else if (child == mFooterView) {
+//                child.layout(0, getHeight(), child.getMeasuredWidth(), getHeight() + child.getMeasuredHeight());
+//            }
+            else {
                 child.layout(0, 0, child.getMeasuredWidth(), child.getMeasuredHeight());
             }
         }
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        velocityTracker.addMovement(ev);
-        velocityTracker.computeCurrentVelocity(100);
-
-        switch (ev.getActionMasked()) {
-            case MotionEvent.ACTION_DOWN:
-                break;
-            case MotionEvent.ACTION_MOVE:
-                velocity = velocityTracker.getYVelocity();
-                if (isLoadingMore2) {
-                    if (velocity < 50)
-                        return true;
-                }
-                if (isFooterVisibility) {
-                    if (velocity > 10) {
-                        finishLoadmoremanual();
-                        return true;
-                    } else {
-                        return true;
-                    }
-                }
-                break;
-
-        }
-
-        return super.dispatchTouchEvent(ev);
     }
 
 
@@ -296,6 +252,7 @@ public class GoRefreshLayout extends ViewGroup {
         int y = (int) event.getY();
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
+                Log.d("onInterceptTouchEvent", "onInterceptTouchEvent==ACTION_DOWN");
                 mLastY = 0;
                 mOrignY = y;
                 //有偏移时再次按下 ，计算得到mCurrentLastY
@@ -314,7 +271,7 @@ public class GoRefreshLayout extends ViewGroup {
                 break;
             case ACTION_MOVE:
                 int dy = y - mLastY;
-                Log.d("onInterceptTouchEvent", "onInterceptTouchEvent==" + 0);
+                Log.d("onInterceptTouchEvent", "onInterceptTouchEvent==ACTION_MOVE");
                 // 内容固定时刷新状态不拦截滑动
                 // 下拉拦截滑动事件
                 // 刷新时Y方向有偏移时上拉拦截滑动事件
@@ -322,7 +279,7 @@ public class GoRefreshLayout extends ViewGroup {
                 // Math.abs(velocity)>1是由于 在手机上点击操作ACTION_DOWN会伴随无意义的ACTION_MOVE的出现 但不会有滑动速度，不拦截
                 if (isFixedContent && mStatus == STATUS_REFRESH) {
                     return false;
-                } else if (!canScrollUp() && dy > 0 && mStatus != STATUS_BACK && Math.abs(velocity) > 1) {
+                } else if (!canScrollUp() && dy > 0 && mStatus != STATUS_BACK ) {
                     return true;
                 } else if (dy < 0 && getScrollY() >= 0) {
                     return false;
@@ -487,7 +444,6 @@ public class GoRefreshLayout extends ViewGroup {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 int value = (int) valueAnimator.getAnimatedValue();
-                Log.d("tag",value+"");
                 if (isFixedContent) {
                     mHeaderView.layout(0, value - mHeaderView.getMeasuredHeight(), mHeaderView.getMeasuredWidth(), value);
                     fixOffset = value;
@@ -516,9 +472,9 @@ public class GoRefreshLayout extends ViewGroup {
      * @param offset
      */
     private void scrollToTop(int offset) {
-        valueAnimatorTotop = ValueAnimator.ofInt(offset, 0);
-        valueAnimatorTotop.setDuration(duration_top);
-        valueAnimatorTotop.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        valueAnimatorToTop = ValueAnimator.ofInt(offset, 0);
+        valueAnimatorToTop.setDuration(duration_top);
+        valueAnimatorToTop.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 int value = (int) valueAnimator.getAnimatedValue();
@@ -533,7 +489,7 @@ public class GoRefreshLayout extends ViewGroup {
                 }
             }
         });
-        valueAnimatorTotop.addListener(new Animator.AnimatorListener() {
+        valueAnimatorToTop.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animator) {
             }
@@ -552,15 +508,15 @@ public class GoRefreshLayout extends ViewGroup {
             }
 
         });
-        valueAnimatorTotop.start();
+        valueAnimatorToTop.start();
     }
 
     /**
      * 取消返回顶部
      */
     private void cancelscrollToTop() {
-        if (valueAnimatorTotop != null && valueAnimatorTotop.isRunning()) {
-            valueAnimatorTotop.cancel();
+        if (valueAnimatorToTop != null && valueAnimatorToTop.isRunning()) {
+            valueAnimatorToTop.cancel();
         }
     }
 
@@ -576,116 +532,6 @@ public class GoRefreshLayout extends ViewGroup {
     //--------------------------------------------------------------------------------
     //------------------------------footer相关--------------------------------------
     //--------------------------------------------------------------------------------
-
-    private void showFooter(boolean isBottom) {
-        if (isBottom && !isFooterVisibility && velocity <= 0) {
-            showFooter();
-            if (!isLoadingMore) {
-                isLoadingMore = true;
-                if (loadmoreListener != null) {
-                    loadmoreListener.onLoadmore();
-                }
-            }
-            isFooterVisibility = true;
-
-        }
-    }
-
-    private void showFooterwithListView(AbsListView absListView, boolean viewToBottom) {
-        if (viewToBottom) {
-            if (loadmoreListener != null) {
-                if (!isLoadingMore) {
-                    loadmoreListener.onLoadmore();
-                    isLoadingMore = true;
-                }
-            }
-        }
-
-    }
-
-    /**
-     * 显示footerview
-     */
-    private void showFooter() {
-        ValueAnimator valueAnimator = ValueAnimator.ofInt(0, (int) mFooterHeight);
-        valueAnimator.setDuration(duration_footerVisiable);
-        valueAnimator.setInterpolator(new LinearInterpolator());
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                int value = (int) valueAnimator.getAnimatedValue();
-                scrollTo(0, value);
-            }
-        });
-        valueAnimator.start();
-    }
-
-    /**
-     * 隐藏footerview
-     */
-    private void hideFooter() {
-        if (duration_footerHidden <= 0) {
-            if (mContentView instanceof RecyclerView) {
-                mContentView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        scrollTo(0, 0);
-                        mContentView.scrollBy(0, (int) mFooterHeight);
-                    }
-                });
-            } else if (mContentView instanceof AbsListView) {
-                mContentView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        scrollTo(0, 0);
-                        ((AbsListView) mContentView).smoothScrollBy((int) mFooterHeight, 0);
-                    }
-                });
-            }
-        } else {
-            ValueAnimator valueAnimator = ValueAnimator.ofInt((int) mFooterHeight, 0);
-            valueAnimator.setDuration(duration_footerHidden);
-            valueAnimator.setInterpolator(new LinearInterpolator());
-            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    final int value = (int) valueAnimator.getAnimatedValue();
-                    final int dy = currentValue - value;
-                    if (value == 0) {
-                        isLoadingMore2 = false;
-                    }
-                    if (dy > 0) {
-                        if (mContentView instanceof RecyclerView) {
-                            mContentView.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    scrollTo(0, value);
-                                    mContentView.scrollBy(0, dy);
-                                }
-                            });
-                        } else if (mContentView instanceof AbsListView) {
-                            mContentView.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    scrollTo(0, value);
-                                    ((AbsListView) mContentView).smoothScrollBy(dy, 0);
-                                }
-                            });
-                        }
-                    }
-
-                    updateCurrentFooterHeight(valueAnimator);
-                }
-            });
-            valueAnimator.start();
-        }
-    }
-
-    private int currentValue;
-
-    private void updateCurrentFooterHeight(ValueAnimator valueAnimator) {
-        currentValue = (int) valueAnimator.getAnimatedValue();
-    }
 
     private void reset() {
         hasY = false;
@@ -704,22 +550,7 @@ public class GoRefreshLayout extends ViewGroup {
         if (mFooterView != null) {
             if (mContentView instanceof AbsListView) {
                 ((ListView) mContentView).removeFooterView(mFooterView);
-            } else {
-                removeView(mFooterView);
             }
-        }
-    }
-
-    /**
-     * 切换footerview
-     *
-     * @param flag
-     */
-    private void switchFooterView(int flag) {
-        if (valid(flag)) {
-            mFooterStatus = flag;
-            removeFooterView();
-            addFooterView(mFooter, flag);
         }
     }
 
@@ -748,43 +579,6 @@ public class GoRefreshLayout extends ViewGroup {
     //--------------------------------------------------------------------------------
 
     /**
-     * 设置header
-     */
-    public void setHeaderView(IHeaderView view) {
-        removeHeaderView();
-        mHeader = view;
-        addHeaderView(view);
-    }
-
-    /**
-     * 设置footer
-     */
-    public void setFooterView(IFooterView view) {
-        if (hasFooter) {
-            mFooter = view;
-            removeFooterView();
-            addFooterView(view, LOADING);
-        }
-    }
-
-
-    /**
-     * 设置是否显示footer
-     *
-     * @param hasFooter
-     */
-    public void setHasFooter(boolean hasFooter) {
-        this.hasFooter = hasFooter;
-        if (hasFooter) {
-            if (mFooterView == null) {
-                setFooterView(mFooter);
-            }
-        } else {
-            removeFooterView();
-        }
-    }
-
-    /**
      * 设置是否显示header
      */
     public void setHasHeader(boolean hasHeader) {
@@ -794,6 +588,32 @@ public class GoRefreshLayout extends ViewGroup {
         } else {
             removeHeaderView();
         }
+    }
+
+    /**
+     * 设置header
+     */
+    public void setHeaderView(IHeaderView view) {
+        removeHeaderView();
+        mHeader = view;
+        addHeaderView(view);
+    }
+
+
+    /**
+     * 设置是否显示footer
+     *
+     * @param hasFooter
+     */
+    public void setHasFooter(boolean hasFooter) {
+        loadMoreHelper.setHasFooter(hasFooter, mContentView, getDefaultFooterView());
+    }
+
+    /**
+     * 设置footer
+     */
+    public void setFooterView(IFooterView view) {
+        loadMoreHelper.setFooterView(view, mContentView);
     }
 
     public boolean isHasFooter() {
@@ -814,8 +634,10 @@ public class GoRefreshLayout extends ViewGroup {
      *
      * @param listener
      */
-    public void setOnLoadmoreListener(LoadmoreListener listener) {
-        this.loadmoreListener = listener;
+    public void setOnLoadMoreListener(LoadMoreListener listener) {
+        loadMoreHelper.setListener(listener);
+        //this.loadMoreListener = listener;
+
     }
 
 
@@ -857,56 +679,24 @@ public class GoRefreshLayout extends ViewGroup {
     }
 
     /**
-     * 隐藏footerview，手动下拉时调用
-     */
-    private void finishLoadmoremanual() {
-        if (isFooterVisibility) {
-            isLoadingMore2 = true;
-            isFooterVisibility = false;
-            hideFooter();
-        }
-    }
-
-    /**
      * 隐藏footerview,加载数据完毕时调用
      */
     public void finishLoadmore() {
-        isLoadingMore = false;
-        if (isFooterVisibility) {
-            isFooterVisibility = false;
-            hideFooter();
-        }
+        loadMoreHelper.finishLoadMore(mContentView);
     }
 
     /**
      * 加载数据完毕没有更多数据时调用
      */
     public void finishLoadmoreWithNoData() {
-        switchFooterView(FINISH);
+        loadMoreHelper.finishLoadmoreWithNoData(mContentView);
     }
 
     /**
      * 加载数据出错时调用
      */
     public void finishLoadmoreWithError() {
-        switchFooterView(ERROR);
-        if (mFooter.getRetryView() != null) {
-            mFooter.getRetryView().setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (loadmoreListener != null) {
-                        if (mContentView instanceof AbsListView) {
-                            switchFooterView(LOADING);
-                            ((ListView) mContentView).setSelection(((ListView) mContentView).getAdapter().getCount() - 1);
-                            loadmoreListener.onLoadmore();
-                            return;
-                        }
-                        switchFooterView(LOADING);
-                        loadmoreListener.onLoadmore();
-                    }
-                }
-            });
-        }
+        loadMoreHelper.finishLoadmoreWithError(mContentView);
     }
 
     /**
@@ -944,16 +734,6 @@ public class GoRefreshLayout extends ViewGroup {
         this.mHeaderHeight = mHeaderHeight;
     }
 
-    public float getFooterHeight() {
-        return mFooterHeight;
-    }
-
-    /**
-     * 设置footer高度
-     */
-    public void setFooterHeight(float mFooterHeight) {
-        this.mFooterHeight = mFooterHeight;
-    }
 
     public float getRefreshHeight() {
         return mRefreshHeight;
@@ -1012,25 +792,12 @@ public class GoRefreshLayout extends ViewGroup {
     }
 
     /**
-     * 设置footerview弹出时长
+     * 设置recyclerview添加上拉加载功能的adapter
+     *
+     * @param rvLoadMoreAdapter
      */
-    public void setDurationFooterVisiable(int duration_footer) {
-        this.duration_footerVisiable = duration_footer;
-    }
-
-    public int getDurationFooterVisiable() {
-        return duration_footerVisiable;
-    }
-
-    /**
-     * 设置footerview返回底部时间
-     */
-    public int getDurationFooterHidden() {
-        return duration_footerHidden;
-    }
-
-    public void setDurationFooterHidden(int duration_footerHidden) {
-        this.duration_footerHidden = duration_footerHidden;
+    public RvLoadMoreWrapper buildRvLoadMoreAdapter(RecyclerView.Adapter rvLoadMoreAdapter) {
+        return loadMoreHelper.buildRvAdapter(rvLoadMoreAdapter);
     }
 
     /**
@@ -1053,7 +820,6 @@ public class GoRefreshLayout extends ViewGroup {
         } else {
             return new DefaultFooterView(context);
         }
-
     }
 
     /**
@@ -1062,17 +828,11 @@ public class GoRefreshLayout extends ViewGroup {
      * @param layoutID
      */
     public void setLoadingView(int layoutID) {
-        if (mFooter instanceof DefaultFooterView) {
-            ((DefaultFooterView) mFooter).setLoadingView(layoutID);
-            setFooterView(mFooter);
-        }
+        loadMoreHelper.setLoadingView(layoutID);
     }
 
     public void setLoadingView(View view) {
-        if (mFooter instanceof DefaultFooterView) {
-            ((DefaultFooterView) mFooter).setLoadingView(view);
-            setFooterView(mFooter);
-        }
+        loadMoreHelper.setLoadingView(view);
     }
 
     /**
@@ -1081,50 +841,32 @@ public class GoRefreshLayout extends ViewGroup {
      * @param layoutID
      */
     public void setFinishWithNodataView(int layoutID) {
-        if (mFooter instanceof DefaultFooterView) {
-            ((DefaultFooterView) mFooter).setFinishView(layoutID);
-            setFooterView(mFooter);
-        }
+        loadMoreHelper.setFinishWithNodataView(layoutID);
     }
 
     public void setFinishWithNodataView(View view) {
-        if (mFooter instanceof DefaultFooterView) {
-            ((DefaultFooterView) mFooter).setFinishView(view);
-            setFooterView(mFooter);
-        }
+        loadMoreHelper.setFinishWithNodataView(view);
     }
 
     /**
      * 设置加载失败状态的footerview
      */
     public void setErrorView(int layoutID) {
-        if (mFooter instanceof DefaultFooterView) {
-            ((DefaultFooterView) mFooter).setErrorView(layoutID);
-            setFooterView(mFooter);
-        }
+        loadMoreHelper.setErrorView(layoutID);
     }
 
     public void setErrorView(View errorView) {
-        if (mFooter instanceof DefaultFooterView) {
-            ((DefaultFooterView) mFooter).setErrorView(errorView);
-            setFooterView(mFooter);
-        }
+        loadMoreHelper.setErrorView(errorView);
     }
 
     /**
      * 设置加载失败状态的footerview ，同时添加触发重试的控件
      */
     public void setErrorViewWithRetry(int layoutID, int retryId) {
-        if (mFooter instanceof DefaultFooterView) {
-            ((DefaultFooterView) mFooter).setErrorView(layoutID, retryId);
-            setFooterView(mFooter);
-        }
+        loadMoreHelper.setErrorViewWithRetry(layoutID, retryId);
     }
 
-    public void setErrorViewWithRetry(View errorView, View retryView) {
-        if (mFooter instanceof DefaultFooterView) {
-            ((DefaultFooterView) mFooter).setErrorView(errorView, retryView);
-            setFooterView(mFooter);
-        }
+    public void setErrorViewWithRetry(View errorView, int retryId) {
+        loadMoreHelper.setErrorViewWithRetry(errorView, retryId);
     }
 }

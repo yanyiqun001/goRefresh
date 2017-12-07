@@ -6,8 +6,11 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.support.annotation.ColorRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.PathInterpolatorCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.Interpolator;
@@ -36,9 +39,11 @@ public class MulRingProgressBar extends View {
     private int mDuration = DEFAULT_DURATION;
     private int mCount = DEFAULT_COUNT;
     private float increment = DEFAULT_INCREMENT;
-
     private Paint mPaint;
     private List<ProgressBean> mList;
+    private Context context;
+    private int delay = 100;
+    private boolean canRun;
 
     public MulRingProgressBar(Context context) {
         this(context, null);
@@ -50,7 +55,7 @@ public class MulRingProgressBar extends View {
 
     public MulRingProgressBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
+        this.context = context;
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.MulRingProgressBar);
         mBallColor = typedArray.getColor(R.styleable.MulRingProgressBar_progress_ball_color, mBallColor);
         mRingColor = typedArray.getColor(R.styleable.MulRingProgressBar_progress_ring_color, mRingColor);
@@ -65,9 +70,10 @@ public class MulRingProgressBar extends View {
 
         for (int i = mCount; i > 0; i--) {
             ProgressBean pb = new ProgressBean();
-            pb.setAnimator(initAnimatior(pb));
             pb.setmCurrentAngle(0);
             pb.setmBallRadius(mBallRadius + increment * i);
+            pb.setDuration(mDuration - (mCount - i) * delay);
+            pb.setAnimator(initAnimatior(pb));
             mList.add(pb);
         }
 
@@ -80,25 +86,23 @@ public class MulRingProgressBar extends View {
 
 
     private ValueAnimator initAnimatior(final ProgressBean pb) {
-        Interpolator pathInterpolatorCompat = PathInterpolatorCompat.create(0.8f, 0f, 0.2f, 1f);
+        Interpolator pathInterpolatorCompat = PathInterpolatorCompat.create(0.7f, 0f, 0.3f, 1f);
         ValueAnimator mAnimator = ValueAnimator.ofInt(0, 359);
-        mAnimator.setDuration(mDuration);
-        mAnimator.setRepeatCount(-1);
+        mAnimator.setDuration(pb.getDuration());
         mAnimator.setInterpolator(pathInterpolatorCompat);
         mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
+                Log.d("dur", animation.getAnimatedValue() + "====" + pb.getmBallRadius());
                 pb.setmCurrentAngle((int) animation.getAnimatedValue());
                 invalidate();
             }
         });
         return mAnimator;
-
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-
         int height = measurehight(heightMeasureSpec);
         int width = measurewidth(widthMeasureSpec);
         setMeasuredDimension(width, height);
@@ -140,7 +144,7 @@ public class MulRingProgressBar extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        for (int i = 0; i < mCount; i++) {
+        for (int i = mCount - 1; i >= 0; i--) {
             drawBall(canvas, mList.get(i).getmCurrentAngle() * 2 * Math.PI / 360, i);
         }
     }
@@ -156,52 +160,96 @@ public class MulRingProgressBar extends View {
         // 根据当前角度获取x、y坐标点
         float x = (float) (getWidth() / 2 + mRingRadius * Math.sin(angle));
         float y = (float) (getHeight() / 2 - mRingRadius * Math.cos(angle));
-
+        if (mList.get(i).getmBallColor() == -1) {
+            mPaint.setColor(mBallColor);
+        } else {
+            mPaint.setColor(mList.get(i).getmBallColor());
+        }
         // 绘制圆
         canvas.drawCircle(x, y, mList.get(i).getmBallRadius(), mPaint);
     }
 
-    public void startAnimation() {
-
-        Runnable runnable = new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    if (i < mCount) {
-                        mList.get(i).getAnimator().start();
-                        postDelayed(this, 60);
-                        i = i + 1;
-                    }
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+    Runnable runnable1 = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                if (i < mCount) {
+                    mList.get(i).getAnimator().start();
+                    postDelayed(this, delay);
+                    i = i + 1;
+                    Log.d("dur", "开始donghua");
                 }
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
-        };
-        postDelayed(runnable, 0);
+        }
+    };
 
+    private void startAnimation() {
+        i = 0;
+        postDelayed(runnable1, 0);
     }
+
 
     private void stopAnimation() {
         for (int i = 0; i < mCount; i++) {
             mList.get(i).getAnimator().end();
+            Log.d("dur", "tingzhi" + i);
         }
         i = 0;
     }
+    public void setColor(@ColorRes int colorResIds) {
+        for (int i = 0; i < mList.size(); i++) {
+            mList.get(i).setmBallColor( ContextCompat.getColor(context, colorResIds));
+        }
+    }
+
+    public void setColors(@ColorRes int... colorResIds) {
+        int colorsCount = Math.min(colorResIds.length, mCount);
+        int[] colorRes = new int[colorsCount];
+        for (int i = 0; i < colorRes.length; i++) {
+            colorRes[i] = ContextCompat.getColor(context, colorResIds[i]);
+        }
+        setColorSchemeColors(colorRes);
+    }
+
+    private void setColorSchemeColors(int[] colorRes) {
+        for (int i = 0; i < colorRes.length; i++) {
+            mList.get(i).setmBallColor(colorRes[i]);
+        }
+    }
+
+    private Runnable runnable2 = new Runnable() {
+        @Override
+        public void run() {
+            if (canRun) {
+                startAnimation();
+                Log.d("dur", "开始");
+                postDelayed(this, mDuration);
+            }
+        }
+    };
 
     public void start() {
-        startAnimation();
+        canRun = true;
+        postDelayed(runnable2, 0);
     }
 
     public void stop() {
+        canRun = false;
+        removeCallbacks(runnable1);
+        removeCallbacks(runnable2);
         stopAnimation();
+        Log.d("dur", "完成");
     }
 
     //销毁页面时停止动画
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        removeCallbacks(runnable1);
+        removeCallbacks(runnable2);
         stopAnimation();
     }
 
@@ -212,12 +260,29 @@ public class MulRingProgressBar extends View {
 
     private class ProgressBean {
         private Animator animator;
-        private Paint paint;
+        private int duration;
         private int mCurrentAngle;
         private float mBallRadius;
+        private int mBallColor = -1;
+
+        public int getDuration() {
+            return duration;
+        }
+
+        public void setDuration(int duration) {
+            this.duration = duration;
+        }
 
         public Animator getAnimator() {
             return animator;
+        }
+
+        public int getmBallColor() {
+            return mBallColor;
+        }
+
+        public void setmBallColor(int mBallColor) {
+            this.mBallColor = mBallColor;
         }
 
         public void setAnimator(Animator animator) {

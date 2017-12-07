@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.GoRefresh.IHeaderView;
+import com.GoRefresh.interfaces.IHeaderView;
 
 /**
  * Created by Administrator on 2017/9/27 0027.

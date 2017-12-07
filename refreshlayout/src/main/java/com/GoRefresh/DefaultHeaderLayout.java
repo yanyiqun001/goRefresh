@@ -7,29 +7,31 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
+import com.GoRefresh.interfaces.IHeaderView;
+import com.GoRefresh.weight.RingProgressBar;
 
 
 /**
  * Created by Administratoron 2017/9/25 0025.
  */
 
-public class DefaultHeaderLayout  implements IHeaderView {
+public class DefaultHeaderLayout implements IHeaderView {
     private View mHeaderView;
     private ImageView icon;
     private TextView text;
     private Context context;
     private RingProgressBar progressBar;
+
     public DefaultHeaderLayout(@NonNull Context context) {
-        this.context=context;
+        this.context = context;
         initView();
     }
 
     private void initView() {
-        mHeaderView=LayoutInflater.from(context).inflate(R.layout.headerview,null);
-        icon= (ImageView) mHeaderView.findViewById(R.id.arrow);
-        text= (TextView) mHeaderView.findViewById(R.id.text);
-        progressBar= (RingProgressBar) mHeaderView.findViewById(R.id.progressbar);
+        mHeaderView = LayoutInflater.from(context).inflate(R.layout.headerview, null);
+        icon = (ImageView) mHeaderView.findViewById(R.id.arrow);
+        text = (TextView) mHeaderView.findViewById(R.id.text);
+        progressBar = (RingProgressBar) mHeaderView.findViewById(R.id.progressbar);
         icon.setVisibility(View.VISIBLE);
         icon.setImageResource(R.drawable.arrow);
     }
@@ -50,18 +52,18 @@ public class DefaultHeaderLayout  implements IHeaderView {
 
     @Override
     public void onChange(boolean isPull) {
-        if(isPull){
-            text.setText("释放刷新");
+        if (isPull) {
+            text.setText(R.string.release);
             arrowUp();
-        }else{
-            text.setText("下拉刷新");
+        } else {
+            text.setText(R.string.pulltorefresh);
             arrowDown();
         }
     }
 
     @Override
     public void onRefresh() {
-        text.setText("正在加载");
+        text.setText(R.string.loading);
         iconChange();
     }
 
@@ -74,12 +76,11 @@ public class DefaultHeaderLayout  implements IHeaderView {
         reset();
     }
 
-
-
-    private void arrowDown(){
+    private void arrowDown() {
         icon.animate().rotation(0).setDuration(300).start();
     }
-    private void arrowUp(){
+
+    private void arrowUp() {
         icon.animate().rotation(-180).setDuration(300).start();
     }
 
@@ -90,7 +91,7 @@ public class DefaultHeaderLayout  implements IHeaderView {
     }
 
     private void reset() {
-        text.setText("下拉刷新");
+        text.setText(R.string.pulltorefresh);
         icon.setVisibility(View.VISIBLE);
         icon.setRotation(0);
         progressBar.setVisibility(View.GONE);
