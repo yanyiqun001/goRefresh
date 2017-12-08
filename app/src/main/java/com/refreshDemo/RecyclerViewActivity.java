@@ -97,7 +97,7 @@ public class RecyclerViewActivity extends AppCompatActivity {
                             refreshLayout.finishLoadmoreWithError();
                             return;
                         }
-                        if (page == 4) {
+                        if (page == 5) {
                             refreshLayout.finishLoadmoreWithNoData();
                             return;
                         } else {
