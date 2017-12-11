@@ -23,7 +23,7 @@ dependencies{
  
  
  
-#### 根布局文件
+### 根布局文件
 ```
 <com.GoRefresh.GoRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/goRefreshLayout"
@@ -38,9 +38,9 @@ dependencies{
 </com.GoRefresh.GoRefreshLayout>
 ```
 
-#### 下拉刷新
+### 下拉刷新
 
-###### 简单实现  
+##### 简单实现  
  
 ```   
      // 设置下拉监听  
@@ -54,14 +54,14 @@ dependencies{
     //  结束刷新  
       goRefreshLayout.finishRefresh();
 ```
-###### 自定义实现
+##### 自定义实现
    
    自定义header需要实现IHeaderView接口，具体请参看demo
    
-###### 自定义头部使用lottie动画 (注意添加依赖)  
-##### 说明:lottie所使用的文件全部来源于 https://www.lottiefiles.com/  并且不断添加新的动画效果。demo中只是选取了其中几个样式。大家可自由选择合适的样式作为刷新动画
+##### 自定义头部使用lottie动画 (注意添加依赖)  
+#### 说明:lottie所使用的文件全部来源于 https://www.lottiefiles.com/  并且不断添加新的动画效果。demo中只是选取了其中几个样式。大家可自由选择合适的样式作为刷新动画
 
-##### 集成步骤：
+#### 集成步骤：
 1. 下载动画文件(xxx.json)
 2. 在自己洗项目中建立assets文件夹，将动画文件拷贝其中
 3. 头部布局文件中添加LottieAnimationView： lottie_fileName属性添加动画文件名
@@ -86,9 +86,9 @@ dependencies{
   LottieView lottieView = new LottieView(this, R.layout.lottle_loading_animation, R.id.animation_view);
   goRefreshLayout.setHeaderView(lottieView);
  ```
-#### 上拉加载
-##### 说明:为了更自然流畅的体验，footerview并没有添加在gorefresh上面，还是使用传统的adapter中添加footer的方式实现,gorefresh只是提供一个统一的入口方便调用。由于listview 和recyclerview添加上拉的实现方式是不同的（lv有setFooterView方法，rv没有），所以在使用方法上也略有不同。
-##### lv使用：
+### 上拉加载
+#### 说明:为了更自然流畅的体验，footerview并没有添加在gorefresh上面，还是使用传统的adapter中添加footer的方式实现,gorefresh只是提供一个统一的入口方便调用。由于listview 和recyclerview添加上拉的实现方式是不同的（lv有setFooterView方法，rv没有），所以在使用方法上也略有不同。
+#### lv使用：
 ```
     //必须设置
     goRefreshLayout.setHasFooter(true); 
@@ -122,7 +122,7 @@ dependencies{
             });
 ``` 
     
-##### rv使用：   
+#### rv使用：   
 ```
    //方式1 与lv类似
     goRefreshLayout.setHasFooter(true); 
@@ -182,7 +182,7 @@ dependencies{
                     });
     recyclerView.setAdapter(rvLoadMoreWrapper);
 ```
-##### 自定义footer：  
+#### 自定义footer：  
 
 自定义footer需要实现IFooterView接口
 
