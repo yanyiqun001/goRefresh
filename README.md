@@ -1,4 +1,5 @@
-# goRefresh
+# goRefresh  
+![image](https://jitpack.io/v/yanyiqun001/goRefresh.svg)
 ### Apk下载体验
 ![image](https://github.com/yanyiqun001/goRefresh/blob/master/screenshots/icon.png)
 ## 使用方式
@@ -16,8 +17,8 @@ module下添加依赖
 
    ```
 dependencies{
-         compile 'com.github.yanyiqun001.goRefresh:refreshlayout:0.6'
-         compile 'com.github.yanyiqun001.goRefresh:refreshlayout_lottie:0.6' (需要使用lottie动画时添加)
+         compile 'com.github.yanyiqun001.goRefresh:refreshlayout:0.6.1'
+         compile 'com.github.yanyiqun001.goRefresh:refreshlayout_lottie:0.6.1' (需要使用lottie动画时添加)
 }
  ```
  
