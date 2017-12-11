@@ -31,7 +31,7 @@ public class ListViewActivity extends AppCompatActivity {
     private MyAdapter adapter = new MyAdapter();
     private List<Integer> list = new ArrayList<>();
     private int page = 1;
-
+    private Handler handler=new Handler();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +54,7 @@ public class ListViewActivity extends AppCompatActivity {
         goRefreshLayout.setOnRefreshListener( new RefreshListener() {
             @Override
             public void onRefresh() {
-                new Handler().postDelayed(new Runnable() {
+                handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         list.clear();
@@ -71,24 +71,24 @@ public class ListViewActivity extends AppCompatActivity {
         goRefreshLayout.setOnLoadMoreListener(new LoadMoreListener() {
             @Override
             public void onLoadmore() {
-                new Handler().postDelayed(new Runnable() {
+                handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         if (page == 2) {
                             //加载错误时调用
-                            goRefreshLayout.finishLoadmoreWithError();
+                            goRefreshLayout.finishLoadMoreWithError();
                             page++;
                             return;
                         }
                         if (page == 3) {
                             //无更多数据时调用
-                            goRefreshLayout.finishLoadmoreWithNoData();
+                            goRefreshLayout.finishLoadMoreWithNoData();
                             return;
                         }
                         page++;
                         addData();
                         //加载完成时调用
-                        goRefreshLayout.finishLoadmore();
+                        goRefreshLayout.finishLoadMore();
                     }
                 }, 2000);
             }

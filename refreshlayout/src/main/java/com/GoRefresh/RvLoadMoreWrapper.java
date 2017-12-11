@@ -20,7 +20,6 @@ public class RvLoadMoreWrapper extends RecyclerView.Adapter<RecyclerView.ViewHol
     private View mLoadMoreView;
     private View mFinishView;
     private View mErrorView;
-    private boolean isRemove;
     private int mlayoutID;
     private int mFinishlayoutID;
     private int mErrorlayoutID;
@@ -163,16 +162,18 @@ public class RvLoadMoreWrapper extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 
-    public void setLoadMoreListener(LoadMoreListener loadMoreListener) {
+    public RvLoadMoreWrapper setLoadMoreListener(LoadMoreListener loadMoreListener) {
         this.mLoadMoreListener = loadMoreListener;
+        return this;
     }
 
-    public void setFooterView(IFooterView loadMoreView) {
+    public RvLoadMoreWrapper setFooterView(IFooterView loadMoreView) {
         mFooterView = loadMoreView;
         mLoadMoreView = mFooterView.getLoadingView();
         mFinishView = mFooterView.getFinishView();
         mErrorView = mFooterView.getFailureView();
         mErrorid = mFooterView.getRetryId();
+        return this;
     }
 
 
@@ -197,14 +198,13 @@ public class RvLoadMoreWrapper extends RecyclerView.Adapter<RecyclerView.ViewHol
         return this;
     }
 
-
-    public RvLoadMoreWrapper setErrorView(int errorID, int retryOnclicklayoutid) {
+    public RvLoadMoreWrapper setErrorViewWithRetry(int errorID, int retryOnclicklayoutid) {
         mErrorlayoutID = errorID;
         mErrorid = retryOnclicklayoutid;
         return this;
     }
 
-    public RvLoadMoreWrapper setErrorView(View errorView, int retryOnclicklayoutid) {
+    public RvLoadMoreWrapper setErrorViewWithRetry(View errorView, int retryOnclicklayoutid) {
         mErrorid = retryOnclicklayoutid;
         mErrorView = errorView;
         return this;
@@ -278,12 +278,13 @@ public class RvLoadMoreWrapper extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 
-    public void setHasFooter(boolean hasFooter) {
+    public RvLoadMoreWrapper setHasFooter(boolean hasFooter) {
         if (hasFooter) {
             LOAD_MORE_STATUS = LOADING;
         } else {
             LOAD_MORE_STATUS = NONE;
         }
+        return this;
     }
 
 

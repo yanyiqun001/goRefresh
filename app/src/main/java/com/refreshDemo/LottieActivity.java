@@ -79,7 +79,7 @@ public class LottieActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         addData();
-                        refreshLayout.finishLoadmore();
+                        refreshLayout.finishLoadMore();
                     }
                 }, 2000);
             }

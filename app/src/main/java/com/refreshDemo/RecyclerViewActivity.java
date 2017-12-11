@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.GoRefesh_core.LottieView;
 import com.GoRefresh.GoRefreshLayout;
 import com.GoRefresh.RvLoadMoreWrapper;
 import com.GoRefresh.interfaces.LoadMoreListener;
@@ -31,7 +30,6 @@ public class RecyclerViewActivity extends AppCompatActivity {
     private MyAdapter adapter;
     private List<Integer> list = new ArrayList<>();
     private final int COUNT = 10;
-    private LottieView lottieView;
     private int page = 1;
     private RvLoadMoreWrapper rvLoadMoreWrapper;
     @Override
@@ -50,30 +48,50 @@ public class RecyclerViewActivity extends AppCompatActivity {
         CustomHeader customHeader = new CustomHeader(this);
         refreshLayout.setHeaderView(customHeader);
 
-        //需要上拉刷新必须设置
-        refreshLayout.setHasFooter(true);
 
 
         //自定义footer
         CustomFooter customFooter = new CustomFooter(this);
 
-        //设置footerview方式1 直接设置
-        refreshLayout.setFooterView(customFooter);
-        //只设置加载状态的footerview
+        //设置footerview方式1
+        // refreshLayout.setHasFooter(true);
+        // refreshLayout.setFooterView(customFooter);
+        //设置加载状态的footerview
         // refreshLayout.setLoadingView(R.layout.lottle_loading_animation_footer);
 
         //上拉加载通过包装adapter实现 通过此方法获得包装后的adapter
         rvLoadMoreWrapper=refreshLayout.buildRvLoadMoreAdapter(adapter);
-
-        //设置footerview方式2 通过包装后的adapter设置
-        rvLoadMoreWrapper.setFooterView(customFooter);
-
-        //只设置加载状态的footerview
-        // rvLoadMoreWrapper.setLoadingView(R.layout.lottle_loading_animation_footer);
+        rvLoadMoreWrapper.setHasFooter(true)
+                 .setFooterView(customFooter)
+//                 .setLoadingView(R.layout.lottle_loading_animation_footer)
+//                 .setFinishView(R.layout.footer_finish)
+//                 .setErrorViewWithRetry(R.layout.footer_error,R.id.tips)
+                 .setLoadMoreListener(new LoadMoreListener() {
+                     @Override
+                     public void onLoadmore() {
+                         new Handler().postDelayed(new Runnable() {
+                             @Override
+                             public void run() {
+                                 page++;
+                                 if (page == 3) {
+                                     rvLoadMoreWrapper.finishLoadMoreWithError();
+                                     return;
+                                 }
+                                 if (page == 5) {
+                                     rvLoadMoreWrapper.finishLoadMoreWithNoData();
+                                     return;
+                                 } else {
+                                     addData();
+                                     rvLoadMoreWrapper.finishLoadMore();
+                                 }
+                             }
+                         }, 2000);
+                     }
+                 });
 
         recyclerView.setAdapter(rvLoadMoreWrapper);
 
-
+        //设置下拉监听
         refreshLayout.setOnRefreshListener(new RefreshListener() {
             @Override
             public void onRefresh() {
@@ -86,38 +104,34 @@ public class RecyclerViewActivity extends AppCompatActivity {
             }
         });
 
-        refreshLayout.setOnLoadMoreListener(new LoadMoreListener() {
-            @Override
-            public void onLoadmore() {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        page++;
-                        if (page == 3) {
-                            refreshLayout.finishLoadmoreWithError();
-                            return;
-                        }
-                        if (page == 5) {
-                            refreshLayout.finishLoadmoreWithNoData();
-                            return;
-                        } else {
-                            addData();
-                            refreshLayout.finishLoadmore();
-                        }
-
-                    }
-                }, 2000);
-            }
-        });
-//        rvLoadMoreWrapper.setLoadMoreListener(new LoadMoreListener() {
+        //设置上拉监听
+//        refreshLayout.setOnLoadMoreListener(new LoadMoreListener() {
 //            @Override
 //            public void onLoadmore() {
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        page++;
+//                        if (page == 3) {
+//                            refreshLayout.finishLoadmoreWithError();
+//                            return;
+//                        }
+//                        if (page == 5) {
+//                            refreshLayout.finishLoadmoreWithNoData();
+//                            return;
+//                        } else {
+//                            addData();
+//                            refreshLayout.finishLoadmore();
+//                        }
 //
+//                    }
+//                }, 2000);
 //            }
 //        });
 
+
         //自动刷新
-        refreshLayout.startRefresh();
+      //  refreshLayout.startRefresh();
         addData();
     }
 

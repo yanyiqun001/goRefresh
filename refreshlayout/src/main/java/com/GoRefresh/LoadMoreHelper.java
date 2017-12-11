@@ -103,7 +103,7 @@ public class LoadMoreHelper {
         isLoadingMore = false;
     }
 
-    public void finishLoadmoreWithNoData(View contentView) {
+    public void finishLoadMoreWithNoData(View contentView) {
         if (contentView instanceof RecyclerView) {
             if (valid(FINISH)) {
                 if (rvloadMoreWrapper != null) {
@@ -118,7 +118,7 @@ public class LoadMoreHelper {
     }
 
 
-    public void finishLoadmoreWithError(final View contentView) {
+    public void finishLoadMoreWithError(final View contentView) {
         if (contentView instanceof RecyclerView) {
             if (valid(ERROR)) {
                 if (rvloadMoreWrapper != null) {

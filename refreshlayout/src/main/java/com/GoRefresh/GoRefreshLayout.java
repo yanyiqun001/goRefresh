@@ -9,12 +9,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.ListView;
 
 import com.GoRefresh.interfaces.IFooterView;
 import com.GoRefresh.interfaces.IHeaderView;
@@ -81,8 +79,6 @@ public class GoRefreshLayout extends ViewGroup {
     private AbsListView.OnScrollListener mScrollListener;
     //是否在加载状态
     private boolean isLoadingMore;
-    //    //footer显示时true
-//    private boolean isLoadingMore2;
     //是否显示hasHeader
     private boolean hasHeader = true;
     //是否显示footer
@@ -97,7 +93,6 @@ public class GoRefreshLayout extends ViewGroup {
     private int mOrignY;
     private int mLastY;
     private float mCurrentLastY;
-    private float velocity;
     //内容固定状态下当前头部偏移
     private float fixOffset;
 
@@ -236,9 +231,6 @@ public class GoRefreshLayout extends ViewGroup {
                     child.layout(0, -child.getMeasuredHeight(), child.getMeasuredWidth(), 0);
                 }
             }
-//            else if (child == mFooterView) {
-//                child.layout(0, getHeight(), child.getMeasuredWidth(), getHeight() + child.getMeasuredHeight());
-//            }
             else {
                 child.layout(0, 0, child.getMeasuredWidth(), child.getMeasuredHeight());
             }
@@ -252,7 +244,6 @@ public class GoRefreshLayout extends ViewGroup {
         int y = (int) event.getY();
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-                Log.d("onInterceptTouchEvent", "onInterceptTouchEvent==ACTION_DOWN");
                 mLastY = 0;
                 mOrignY = y;
                 //有偏移时再次按下 ，计算得到mCurrentLastY
@@ -271,7 +262,6 @@ public class GoRefreshLayout extends ViewGroup {
                 break;
             case ACTION_MOVE:
                 int dy = y - mLastY;
-                Log.d("onInterceptTouchEvent", "onInterceptTouchEvent==ACTION_MOVE");
                 // 内容固定时刷新状态不拦截滑动
                 // 下拉拦截滑动事件
                 // 刷新时Y方向有偏移时上拉拦截滑动事件
@@ -369,7 +359,6 @@ public class GoRefreshLayout extends ViewGroup {
                     if (refresrhListener != null) {
                         refresrhListener.onRefresh();
                     }
-                    //    postDelayed(runnable, 4000);
                 } else if (mStatus == STATUS_BACK) {
                     break;
                 }
@@ -529,10 +518,6 @@ public class GoRefreshLayout extends ViewGroup {
         reset();
     }
 
-    //--------------------------------------------------------------------------------
-    //------------------------------footer相关--------------------------------------
-    //--------------------------------------------------------------------------------
-
     private void reset() {
         hasY = false;
         mOrignY = -1;
@@ -546,33 +531,6 @@ public class GoRefreshLayout extends ViewGroup {
         }
     }
 
-    private void removeFooterView() {
-        if (mFooterView != null) {
-            if (mContentView instanceof AbsListView) {
-                ((ListView) mContentView).removeFooterView(mFooterView);
-            }
-        }
-    }
-
-    private boolean valid(int flag) {
-        if (mFooter != null) {
-            if (flag == LOADING) {
-                if (mFooter.getLoadingView() != null) {
-                    return true;
-                }
-            } else if (flag == FINISH) {
-                if (mFooter.getFinishView() != null) {
-                    return true;
-                }
-
-            } else if (flag == ERROR) {
-                if (mFooter.getFailureView() != null) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
     //--------------------------------------------------------------------------------
     //------------------------------对外提供api--------------------------------------
@@ -681,22 +639,22 @@ public class GoRefreshLayout extends ViewGroup {
     /**
      * 隐藏footerview,加载数据完毕时调用
      */
-    public void finishLoadmore() {
+    public void finishLoadMore() {
         loadMoreHelper.finishLoadMore(mContentView);
     }
 
     /**
      * 加载数据完毕没有更多数据时调用
      */
-    public void finishLoadmoreWithNoData() {
-        loadMoreHelper.finishLoadmoreWithNoData(mContentView);
+    public void finishLoadMoreWithNoData() {
+        loadMoreHelper.finishLoadMoreWithNoData(mContentView);
     }
 
     /**
      * 加载数据出错时调用
      */
-    public void finishLoadmoreWithError() {
-        loadMoreHelper.finishLoadmoreWithError(mContentView);
+    public void finishLoadMoreWithError() {
+        loadMoreHelper.finishLoadMoreWithError(mContentView);
     }
 
     /**
@@ -840,11 +798,11 @@ public class GoRefreshLayout extends ViewGroup {
      *
      * @param layoutID
      */
-    public void setFinishWithNodataView(int layoutID) {
+    public void setFinishView(int layoutID) {
         loadMoreHelper.setFinishWithNodataView(layoutID);
     }
 
-    public void setFinishWithNodataView(View view) {
+    public void setFinishView(View view) {
         loadMoreHelper.setFinishWithNodataView(view);
     }
 

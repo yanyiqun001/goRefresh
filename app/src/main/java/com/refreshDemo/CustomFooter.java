@@ -4,17 +4,15 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import com.GoRefresh.DefaultFooterView;
+import com.GoRefresh.interfaces.IFooterView;
 
 /**
  * Created by Administrator on 2017/11/24 0024.
- * 这里继承了DefaultFooterView 也可直接实现IFooterView接口
  */
 
-public class CustomFooter extends DefaultFooterView {
+public class CustomFooter implements IFooterView {
     private LayoutInflater inflater;
     public CustomFooter(Context context) {
-        super(context);
         inflater=LayoutInflater.from(context);
     }
 
@@ -25,12 +23,17 @@ public class CustomFooter extends DefaultFooterView {
 
     @Override
     public View getFinishView() {
-        return super.getFinishView();
+        return inflater.inflate(R.layout.footer_finish,null);
     }
 
     @Override
     public View getFailureView() {
-        return super.getFailureView();
+        return inflater.inflate(R.layout.footer_error,null);
+    }
+
+    @Override
+    public int getRetryId() {
+        return R.id.tips;
     }
 
 
