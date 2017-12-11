@@ -42,13 +42,9 @@ public class ListViewActivity extends AppCompatActivity {
         if (list.size() >= 10) {
             goRefreshLayout.setHasFooter(true);
         }
-        listView.setAdapter(adapter);
 
         CustomFooter customFooter = new CustomFooter(this);
         goRefreshLayout.setFooterView(customFooter);
-
-        goRefreshLayout.setLoadingView(R.layout.footer_loading);
-        goRefreshLayout.setErrorViewWithRetry(R.layout.footerview_error, R.id.tips);
 
         //下拉刷新
         goRefreshLayout.setOnRefreshListener( new RefreshListener() {
@@ -113,7 +109,7 @@ public class ListViewActivity extends AppCompatActivity {
 //                Toast.makeText(ListViewActivity.this, i + "", Toast.LENGTH_SHORT).show();
 //            }
 //        });
-
+        listView.setAdapter(adapter);
 
     }
 

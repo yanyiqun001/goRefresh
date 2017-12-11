@@ -140,8 +140,6 @@ public class GoRefreshLayout extends ViewGroup {
         duration_autotoRefreshHeight = typedArray.getInt(R.styleable.GoRefreshLayout_duration_autotoRefreshHeight, duration_autotoRefreshHeight);
         typedArray.recycle();
         mHeader = new DefaultHeaderLayout(context);
-        mFooter = new DefaultFooterView(context);
-
     }
 
 

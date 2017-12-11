@@ -40,6 +40,8 @@ public class LoadMoreHelper {
             if (hasFooter) {
                 if (mFooter == null) {
                     setFooterView(defaultFooterView, contentView);
+                }else{
+                    setFooterView();
                 }
             } else {
                 removeFooterView((ListView) contentView);
@@ -127,9 +129,11 @@ public class LoadMoreHelper {
             }
         } else if (contentView instanceof ListView) {
             if (mFooterStatus != ERROR) {
-                View view = mFooter.getFailureView().findViewById(mFooter.getRetryId());
-                if (view != null) {
-                    view.setOnClickListener(new View.OnClickListener() {
+                switchFooterView((ListView) contentView, ERROR);
+                View errorView = mFooter.getFailureView();
+                View retryView= errorView.findViewById(mFooter.getRetryId());
+                if (retryView != null) {
+                    retryView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             if (listener != null) {
@@ -141,7 +145,7 @@ public class LoadMoreHelper {
                         }
                     });
                 }
-                switchFooterView((ListView) contentView, ERROR);
+
             }
         }
     }

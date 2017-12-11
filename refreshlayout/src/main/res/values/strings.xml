@@ -4,4 +4,6 @@
     <string name="release">释放刷新</string>
     <string name="pulltorefresh">下拉刷新</string>
     <string name="loading">正在加载</string>
+    <string name="string_gorefresh_retry">加载失败，点击重试</string>
+    <string name="string_gorefresh_nomore">没有更多数据了</string>
 </resources>

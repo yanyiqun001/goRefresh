@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="40dp"
+    android:layout_height="wrap_content"
     android:gravity="center">
     <com.GoRefresh.weight.RingProgressBar
         android:id="@+id/progressbar"
@@ -17,6 +17,6 @@
         android:textColor="#9e9e9e"
         android:id="@+id/text"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:text="@string/loadingtext"/>
 </LinearLayout>

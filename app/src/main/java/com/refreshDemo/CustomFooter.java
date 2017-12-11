@@ -12,28 +12,34 @@ import com.GoRefresh.interfaces.IFooterView;
 
 public class CustomFooter implements IFooterView {
     private LayoutInflater inflater;
+    private View mLoadingView;
+    private View mErrorview;
+    private View mFinishView;
     public CustomFooter(Context context) {
         inflater=LayoutInflater.from(context);
+        mErrorview=inflater.inflate(R.layout.footerview_error,null);
+        mLoadingView=inflater.inflate(R.layout.lottle_loading_animation_footer,null);
+        mFinishView=inflater.inflate(R.layout.footer_finish,null);
     }
 
     @Override
     public View getLoadingView() {
-        return inflater.inflate(R.layout.lottle_loading_animation_footer,null);
+        return mLoadingView;
     }
 
     @Override
     public View getFinishView() {
-        return inflater.inflate(R.layout.footer_finish,null);
+        return mFinishView;
     }
 
     @Override
     public View getFailureView() {
-        return inflater.inflate(R.layout.footer_error,null);
+        return mErrorview;
     }
 
     @Override
     public int getRetryId() {
-        return R.id.tips;
+        return R.id.tv_retry;
     }
 
 

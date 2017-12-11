@@ -34,8 +34,8 @@ module下添加依赖
 
    ```
 dependencies{
-         compile 'com.github.yanyiqun001.goRefresh:refreshlayout:0.6.1'
-         compile 'com.github.yanyiqun001.goRefresh:refreshlayout_lottie:0.6.1' (需要使用lottie动画时添加)
+         compile 'com.github.yanyiqun001.goRefresh:refreshlayout:0.6.2'
+         compile 'com.github.yanyiqun001.goRefresh:refreshlayout_lottie:0.6.2' (需要使用lottie动画时添加)
 }
  ```
  
@@ -209,28 +209,34 @@ dependencies{
 ```
     public class CustomFooter implements IFooterView {
         private LayoutInflater inflater;
+        private View mLoadingView;
+        private View mErrorview;
+        private View mFinishView;
         public CustomFooter(Context context) {
             inflater=LayoutInflater.from(context);
+            mErrorview=inflater.inflate(R.layout.footerview_error,null);
+            mLoadingView=inflater.inflate(R.layout.lottle_loading_animation_footer,null);
+            mFinishView=inflater.inflate(R.layout.footer_finish,null);
         }
     
         @Override
         public View getLoadingView() {
-            return inflater.inflate(R.layout.lottle_loading_animation_footer,null);
+            return mLoadingView;
         }
     
         @Override
         public View getFinishView() {
-            return inflater.inflate(R.layout.footer_finish,null);
+            return mFinishView;
         }
     
         @Override
         public View getFailureView() {
-            return inflater.inflate(R.layout.footer_error,null);
+            return mErrorview;
         }
     
         @Override
         public int getRetryId() {
-            return R.id.tips;
+            return R.id.tv_retry;
         }
     }
 ```
