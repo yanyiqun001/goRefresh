@@ -2,6 +2,23 @@
 ![image](https://jitpack.io/v/yanyiqun001/goRefresh.svg)
 ### Apk下载体验
 ![image](https://github.com/yanyiqun001/goRefresh/blob/master/screenshots/icon.png)
+
+## demo gif
+
+
+![image](https://github.com/yanyiqun001/goRefresh/blob/master/screenshots/gif.gif?raw=true)
+![image](https://github.com/yanyiqun001/goRefresh/blob/master/screenshots/gif2.gif?raw=true)
+
+![image](https://github.com/yanyiqun001/goRefresh/blob/master/screenshots/gif3.gif?raw=true)
+![image](https://github.com/yanyiqun001/goRefresh/blob/master/screenshots/gif4.gif?raw=true)
+
+![image](https://github.com/yanyiqun001/goRefresh/blob/master/screenshots/gif5.gif?raw=true)
+![image](https://github.com/yanyiqun001/goRefresh/blob/master/screenshots/gif6.gif?raw=true)
+
+![image](https://github.com/yanyiqun001/goRefresh/blob/master/screenshots/gif7.gif?raw=true)
+![image](https://github.com/yanyiqun001/goRefresh/blob/master/screenshots/gif8.gif?raw=true)
+
+![image](https://github.com/yanyiqun001/goRefresh/blob/master/screenshots/gif9.gif?raw=true)
 ## 使用方式
 
 项目gradle文件添加
@@ -41,7 +58,7 @@ dependencies{
 
 ### 下拉刷新
 
-##### 简单实现  
+#### 简单实现  
  
 ```   
      // 设置下拉监听  
@@ -55,11 +72,11 @@ dependencies{
     //  结束刷新  
       goRefreshLayout.finishRefresh();
 ```
-##### 自定义实现
+#### 自定义实现
    
    自定义header需要实现IHeaderView接口，具体请参看demo
    
-##### 自定义头部使用lottie动画 (注意添加依赖)  
+#### 自定义头部使用lottie动画 (注意添加依赖)  
 #### 说明:lottie所使用的文件全部来源于 https://www.lottiefiles.com/  并且不断添加新的动画效果。demo中只是选取了其中几个样式。大家可自由选择合适的样式作为刷新动画
 
 #### 集成步骤：
@@ -226,19 +243,10 @@ dependencies{
  //...其余代码略
 ```
 
-## demo gif
 
 
-![image](https://github.com/yanyiqun001/goRefresh/blob/master/screenshots/gif.gif?raw=true)
-![image](https://github.com/yanyiqun001/goRefresh/blob/master/screenshots/gif2.gif?raw=true)
+## 感谢
 
-![image](https://github.com/yanyiqun001/goRefresh/blob/master/screenshots/gif3.gif?raw=true)
-![image](https://github.com/yanyiqun001/goRefresh/blob/master/screenshots/gif4.gif?raw=true)
-
-![image](https://github.com/yanyiqun001/goRefresh/blob/master/screenshots/gif5.gif?raw=true)
-![image](https://github.com/yanyiqun001/goRefresh/blob/master/screenshots/gif6.gif?raw=true)
-
-![image](https://github.com/yanyiqun001/goRefresh/blob/master/screenshots/gif7.gif?raw=true)
-![image](https://github.com/yanyiqun001/goRefresh/blob/master/screenshots/gif8.gif?raw=true)
-
-![image](https://github.com/yanyiqun001/goRefresh/blob/master/screenshots/gif9.gif?raw=true)
+  [TwinklingRefreshLayout](https://github.com/lcodecorex/TwinklingRefreshLayout)
+  
+  [baseAdapter](https://github.com/hongyangAndroid/baseAdapter)
