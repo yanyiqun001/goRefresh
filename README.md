@@ -125,7 +125,7 @@ dependencies{
                 @Override
                 public void onLoadmore() {
                     //添加自己的代码
-                    new Handler().postDelayed(new Runnable() {
+                    handler.postDelayed(new Runnable() {
                            @Override
                           public void run() {
                             //结束刷新
@@ -159,7 +159,7 @@ dependencies{
                 @Override
                 public void onLoadmore() {
                     //添加自己的代码
-                    new Handler().postDelayed(new Runnable() {
+                   handler.postDelayed(new Runnable() {
                            @Override
                           public void run() {
                             //结束刷新
@@ -185,7 +185,7 @@ dependencies{
                         @Override
                         public void onLoadmore() {
                              //添加自己的代码
-                             new Handler().postDelayed(new Runnable() {
+                             handler.postDelayed(new Runnable() {
                                   @Override
                                  public void run() {
                                       //结束刷新
